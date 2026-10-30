@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قصر ابن حميدو للمأكولات البحرية</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+brand: {
+dark: '#030811',
+card: '#0a1526',
+gold: '#fbbf24',
+goldHover: '#d97706',
+cyan: '#06b6d4'
+}
+},
+fontFamily: {
+cairo: ['Cairo', 'sans-serif']
+}
+}
+}
+}
+</script>
+<style>
+body {
+font-family: 'Cairo', sans-serif;
+background-color: #030811;
+color: #f8fafc;
+}
+.glass-panel {
+background: rgba(10, 21, 38, 0.85);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(251, 191, 36, 0.15);
+}
+.custom-scrollbar::-webkit-scrollbar {width: 6px;}
+.custom-scrollbar::-webkit-scrollbar-track {background: #030811;}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+background: #1e293b;
+border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {background: #fbbf24;}
+</style>
+</head>
+<body class="pb-24 custom-scrollbar selection:bg-yellow-500 selection:text-black">
+
+<header class="sticky top-0 z-40 glass-panel border-b border-yellow-500/20 px-4 py-3">
+<div class="max-w-7xl mx-auto flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-gradient-to-tr from-yellow-500 to-amber-600 flex items-center justify-center text-black text-2xl font-black shadow-lg">
+<i class="fa-solid fa-fish"></i>
+</div>
+<div>
+<h1 class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-200 to-yellow-500">قصر ابن حميدو</h1>
+<p class="text-xs text-cyan-400 font-semibold">للمأكولات البحرية 🐟</p>
+</div>
+</div>
+<button onclick="toggleCart()" class="relative bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-4 py-2 rounded-xl transition duration-300 flex items-center gap-2 shadow-lg">
+<i class="fa-solid fa-cart-shopping text-lg"></i>
+<span class="hidden sm:inline">السلة</span>
+<span id="cartCountBadge" class="bg-black text-yellow-400 text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold">0</span>
+</button>
+</div>
+</header>
+
+<section class="relative py-8 px-4 text-center overflow-hidden border-b border-yellow-500/10">
+<div class="max-w-4xl mx-auto relative z-10">
+<span class="inline-block bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-xs px-4 py-1 rounded-full mb-2 font-semibold">
+📍 زهرة العاصمة - مول العاملين بالعاصمة
+</span>
+<h2 class="text-2xl md:text-4xl font-black mb-2 text-white">منيو قصر ابن حميدو التفاعلي</h2>
+<p class="text-gray-400 text-xs md:text-sm max-w-xl mx-auto mb-4">
+اضغط على أي أكلة لمعاينة صورتها واختيار الحجم والوزن المطلوبة ثم إضافتها للسلة وللطلب مباشرة دليفري عبر الواتساب!
+</p>
+</div>
+</section>
+
+<main id="menu" class="max-w-7xl mx-auto px-4 py-6">
+<div class="flex gap-2 overflow-x-auto pb-4 mb-6 custom-scrollbar border-b border-gray-800">
+<button onclick="filterCategory('all')" class="cat-btn active bg-yellow-500 text-black font-bold px-5 py-2 rounded-xl whitespace-nowrap transition">الكل</button>
+<button onclick="filterCategory('fish')" class="cat-btn bg-brand-card hover:bg-slate-800 text-gray-300 font-bold px-5 py-2 rounded-xl whitespace-nowrap border border-gray-800 transition">🐟 الأسماك</button>
+<button onclick="filterCategory('sandwiches')" class="cat-btn bg-brand-card hover:bg-slate-800 text-gray-300 font-bold px-5 py-2 rounded-xl whitespace-nowrap border border-gray-800 transition">🥪 السندوتشات</button>
+<button onclick="filterCategory('meals')" class="cat-btn bg-brand-card hover:bg-slate-800 text-gray-300 font-bold px-5 py-2 rounded-xl whitespace-nowrap border border-gray-800 transition">🍱 الوجبات</button>
+<button onclick="filterCategory('tawagines')" class="cat-btn bg-brand-card hover:bg-slate-800 text-gray-300 font-bold px-5 py-2 rounded-xl whitespace-nowrap border border-gray-800 transition">🍲 الطواجن</button>
+<button onclick="filterCategory('sharqawi')" class="cat-btn bg-brand-card hover:bg-slate-800 text-gray-300 font-bold px-5 py-2 rounded-xl whitespace-nowrap border border-gray-800 transition">👑 قسم الشرقاوي</button>
+<button onclick="filterCategory('extras')" class="cat-btn bg-brand-card hover:bg-slate-800 text-gray-300 font-bold px-5 py-2 rounded-xl whitespace-nowrap border border-gray-800 transition">🍚 الإضافات</button>
+</div>
+<div id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+</main>
+
+<div id="itemModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+<div class="glass-panel w-full max-w-lg rounded-2xl overflow-hidden relative border border-yellow-500/30 max-h-[90vh] flex flex-col">
+<button onclick="closeItemModal()" class="absolute top-3 left-3 bg-black/60 text-white hover:text-yellow-400 w-9 h-9 rounded-full flex items-center justify-center z-10 transition">
+<i class="fa-solid fa-xmark text-lg"></i>
+</button>
+<div class="relative h-56 w-full bg-slate-900 shrink-0">
+<img id="modalImg" src="" alt="" class="w-full h-full object-cover">
+<div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-black/30"></div>
+<div class="absolute bottom-3 right-4 left-4">
+<h3 id="modalTitle" class="text-2xl font-black text-yellow-400"></h3>
+<p id="modalCategory" class="text-xs text-gray-300"></p>
+</div>
+</div>
+<div class="p-5 overflow-y-auto custom-scrollbar flex-1 space-y-4">
+<p id="modalDesc" class="text-sm text-gray-300 leading-relaxed"></p>
+<div id="modalOptionsContainer" class="space-y-2"></div>
+</div>
+<div class="p-4 border-t border-gray-800 bg-brand-card shrink-0">
+<button id="modalAddBtn" onclick="addModalItemToCart()" class="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-extrabold py-3 rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+<i class="fa-solid fa-cart-plus"></i> إضافة إلى السلة
+</button>
+</div>
+</div>
+</div>
+
+<div id="cartDrawer" class="fixed inset-y-0 left-0 w-full max-w-md bg-brand-dark z-50 transform -translate-x-full transition-transform duration-300 ease-in-out border-r border-yellow-500/20 flex flex-col shadow-2xl">
+<div class="p-4 border-b border-gray-800 flex justify-between items-center bg-brand-card">
+<div class="flex items-center gap-2">
+<i class="fa-solid fa-cart-shopping text-yellow-400 text-lg"></i>
+<h3 class="font-bold text-lg text-white">سلة الطلبات</h3>
+</div>
+<button onclick="toggleCart()" class="text-gray-400 hover:text-white p-2">
+<i class="fa-solid fa-xmark text-xl"></i>
+</button>
+</div>
+<div id="cartItemsList" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar"></div>
+<div class="p-4 border-t border-gray-800 bg-brand-card space-y-3">
+<div class="space-y-1 text-sm border-b border-gray-800 pb-2">
+<div class="flex justify-between text-gray-400">
+<span>إجمالي المنتجات:</span>
+<span id="cartSubtotal" class="font-bold text-white">0 ج.م</span>
+</div>
+<div id="deliveryFeeRow" class="flex justify-between text-gray-400">
+<span>رسوم التوصيل (دليفري):</span>
+<span id="deliveryFeeText" class="font-bold text-yellow-400">20 ج.م</span>
+</div>
+<div class="flex justify-between text-lg font-black text-white pt-1">
+<span>الإجمالي الكلي:</span>
+<span id="cartGrandTotal" class="text-yellow-400">0 ج.م</span>
+</div>
+</div>
+
+<form id="orderForm" onsubmit="sendWhatsAppOrder(event)" class="space-y-2 text-xs">
+<div>
+<label class="block text-gray-400 mb-1">الاسم بالكامل *</label>
+<input type="text" id="custName" required placeholder="أدخل اسمك" class="w-full bg-slate-900 border border-gray-700 rounded-lg p-2 text-white focus:border-yellow-500 outline-none">
+</div>
+<div>
+<label class="block text-gray-400 mb-1">رقم الهاتف *</label>
+<input type="tel" id="custPhone" required placeholder="01XXXXXXXXX" class="w-full bg-slate-900 border border-gray-700 rounded-lg p-2 text-white focus:border-yellow-500 outline-none">
+</div>
+<div>
+<label class="block text-gray-400 mb-1">طريقة الاستلام *</label>
+<select id="orderType" onchange="handleOrderTypeChange()" class="w-full bg-slate-900 border border-gray-700 rounded-lg p-2 text-white focus:border-yellow-500 outline-none">
+<option value="delivery">توصيل دليفري (إلى عنوانك)</option>
+<option value="pickup">استلام من المحل (فرع العاصمة)</option>
+</select>
+</div>
+<div id="addressGroup">
+<label class="block text-gray-400 mb-1">العنوان التفصيلي *</label>
+<input type="text" id="custAddress" required placeholder="المنطقة / الشارع / رقم العمارة والشقة" class="w-full bg-slate-900 border border-gray-700 rounded-lg p-2 text-white focus:border-yellow-500 outline-none">
+</div>
+<div>
+<label class="block text-gray-400 mb-1">ملاحظات إضافية (اختياري)</label>
+<input type="text" id="orderNotes" placeholder="مثال: تسوية الشواء، زيادة الليمون..." class="w-full bg-slate-900 border border-gray-700 rounded-lg p-2 text-white focus:border-yellow-500 outline-none">
+</div>
+<button type="submit" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-black font-extrabold py-3 rounded-xl transition duration-300 flex items-center justify-center gap-2 shadow-lg mt-2 text-sm">
+<i class="fa-brands fa-whatsapp text-lg"></i> إرسال الطلب عبر الواتساب
+</button>
+</form>
+</div>
+</div>
+
+<div class="fixed bottom-0 inset-x-0 bg-slate-950/90 backdrop-blur-lg border-t border-yellow-500/20 p-2.5 z-30">
+<div class="max-w-4xl mx-auto flex items-center justify-around text-xs font-bold">
+<a href="tel:01128021899" class="flex flex-col items-center text-gray-300 hover:text-yellow-400">
+<i class="fa-solid fa-phone text-base text-yellow-400 mb-0.5"></i>
+<span>طلب دليفري</span>
+</a>
+<a href="https://wa.me/201128021899" target="_blank" class="flex flex-col items-center text-gray-300 hover:text-green-400">
+<i class="fa-brands fa-whatsapp text-base text-green-400 mb-0.5"></i>
+<span>واتساب الطلبات</span>
+</a>
+<a href="tel:01028080442" class="flex flex-col items-center text-gray-300 hover:text-red-400">
+<i class="fa-solid fa-headset text-base text-red-400 mb-0.5"></i>
+<span>الشكاوى</span>
+</a>
+</div>
+</div>
+
+<script>
+const menuData = [
+{ id: 'f1', category: 'fish', categoryName: 'قسم الأسماك', name: 'سمك بوري', desc: 'طازج يومياً، يتم وزنه وتحضيره حسب اختيارك (سنجاري / مشوي / زيت وليمون).', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85' },
+{ id: 'f2', category: 'fish', categoryName: 'قسم الأسماك', name: 'سمك بلطي', desc: 'بلطي طازج ممتاز (مقلي / مشوي / سنجاري بالخلطة).', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85' },
+{ id: 'f3', category: 'fish', categoryName: 'قسم الأسماك', name: 'سمك ماكريل', desc: 'ماكريل طازج مشوي خلطة إسكندراني أو سنجاري.', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=900&q=85' },
+{ id: 'f4', category: 'fish', categoryName: 'قسم الأسماك', name: 'سمك قاروص', desc: 'قاروص فاخر مأكولات بحرية إكسترا بالفرن أو ملح.', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85' },
+{ id: 'f5', category: 'fish', categoryName: 'قسم الأسماك', name: 'سمك دنيس', desc: 'دنيس طازج ممتاز مشوي زيت وليمون أو بالفرن.', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85' },
+{ id: 'f6', category: 'fish', categoryName: 'قسم الأسماك', name: 'مكرونة سويسي', desc: 'سمك مكرونة سويسي بلدي مقلي مقرمش.', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=900&q=85' },
+{ id: 'f7', category: 'fish', categoryName: 'قسم الأسماك', name: 'سمك بربوني', desc: 'بربوني بلدي فاخر طازج مقلي.', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=900&q=85' },
+{ id: 'f8', category: 'fish', categoryName: 'قسم الأسماك', name: 'سبيط', desc: 'سبيط بلدي طازج (طاجن / مقلي / مشوي).', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=900&q=85' },
+{ id: 'f9', category: 'fish', categoryName: 'قسم الأسماك', name: 'سمك مرجان', desc: 'مرجان بلدي ممتاز مقلي مقرمش.', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=900&q=85' },
+{ id: 'f10', category: 'fish', categoryName: 'قسم الأسماك', name: 'فيليه أسماك', desc: 'قطع فيليه طازجة بدون شوك (مقلي / مشوي).', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85' },
+{ id: 'f11', category: 'fish', categoryName: 'قسم الأسماك', name: 'كابوريا / كابوريا نتى', desc: 'كابوريا طازجة مبشرة مليانة بالخلطة.', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1559737679-4628211b7dfb?auto=format&fit=crop&w=900&q=85' },
+{ id: 'f12', category: 'fish', categoryName: 'قسم الأسماك', name: 'جمبري طازج', desc: 'جمبري بجميع أحجامه (مسلوق / مشوي / مقلي).', priceText: 'حسب الوزن', isWeight: true, img: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=900&q=85' },
+
+{
+id: 's1', category: 'sandwiches', categoryName: 'قسم السندوتشات', name: 'سندوتش جمبري', desc: 'جمبري مقرمش مع طحينة وسلطات في خبز طازج.',
+options: [{label: 'كبير (L)', price: 60}, {label: 'وسط (M)', price: 50}, {label: 'صغير (S)', price: 40}],
+img: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=900&q=85'
+},
+{
+id: 's2', category: 'sandwiches', categoryName: 'قسم السندوتشات', name: 'سندوتش سبيط', desc: 'قطع سبيط مقلية مع خلطة ابن حميدو المميزة.',
+options: [{label: 'كبير (L)', price: 60}, {label: 'وسط (M)', price: 50}, {label: 'صغير (S)', price: 40}],
+img: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=900&q=85'
+},
+{
+id: 's3', category: 'sandwiches', categoryName: 'قسم السندوتشات', name: 'سندوتش فيليه', desc: 'فيليه سمك مقلي مقرمش مع الصوص الخاص والطحينة.',
+options: [{label: 'كبير (L)', price: 40}, {label: 'وسط (M)', price: 35}, {label: 'صغير (S)', price: 30}],
+img: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=900&q=85'
+},
+{
+id: 's4', category: 'sandwiches', categoryName: 'قسم السندوتشات', name: 'سندوتش كبدة', desc: 'كبدة إسكندراني بالبهارات الخاصة والفلفل الحار.',
+options: [{label: 'كبير (L)', price: 35}, {label: 'وسط (M)', price: 30}, {label: 'صغير (S)', price: 25}],
+img: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=900&q=85'
+},
+{
+id: 's5', category: 'sandwiches', categoryName: 'قسم السندوتشات', name: 'سندوتش مخ', desc: 'مخ بانيه مقرمش طازج وغني بالنكهات.',
+options: [{label: 'كبير (L)', price: 80}, {label: 'وسط (M)', price: 75}, {label: 'صغير (S)', price: 65}],
+img: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=900&q=85'
+},
+
+{
+id: 'm1', category: 'meals', categoryName: 'قسم الوجبات', name: 'وجبة بلطي', desc: 'سمكة بلطي طازجة + أرز صيادية + سلطات + عيش.',
+options: [{label: 'وجبة كبيرة', price: 75}, {label: 'وجبة عادية', price: 70}],
+img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85'
+},
+{ id: 'm2', category: 'meals', categoryName: 'قسم الوجبات', name: 'وجبة فيليه', desc: 'قطع فيليه مقلي + أرز صيادية + سلطات + عيش.', price: 65, img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85' },
+{ id: 'm3', category: 'meals', categoryName: 'قسم الوجبات', name: 'وجبة كبدة', desc: 'كبدة اسكندراني + أرز + سلطات + عيش.', price: 65, img: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=85' },
+{ id: 'm4', category: 'meals', categoryName: 'قسم الوجبات', name: 'وجبة الجمبري', desc: 'جمبري مقلي أو مشوي + أرز سي فود + سلطات.', price: 90, img: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=900&q=85' },
+{
+id: 'm5', category: 'meals', categoryName: 'قسم الوجبات', name: 'الأرز بالجمبري', desc: 'طبق أرز أصفر فاخر مفلفل بقطع الجمبري.',
+options: [{label: 'حجم كبير (L)', price: 100}, {label: 'حجم وسط (M)', price: 80}, {label: 'حجم صغير (S)', price: 60}],
+img: 'https://images.unsplash.com/photo-1516684732162-798a0062be99?auto=format&fit=crop&w=900&q=85'
+},
+
+{ id: 't1', category: 'tawagines', categoryName: 'قسم الطواجن', name: 'طاجن جمبري', desc: 'جمبري بالصلصة الحمراء والأعشاب بالفرن.', price: 130, img: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=900&q=85' },
+{ id: 't2', category: 'tawagines', categoryName: 'قسم الطواجن', name: 'طاجن قندفلي', desc: 'قندفلي بلدي بالخلطة والبهارات البحرية.', price: 110, img: 'https://images.unsplash.com/photo-1559737679-4628211b7dfb?auto=format&fit=crop&w=900&q=85' },
+{ id: 't3', category: 'tawagines', categoryName: 'قسم الطواجن', name: 'طاجن سبيط', desc: 'سبيط طازج بالصوص والخضار بالفرن.', price: 120, img: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=900&q=85' },
+{ id: 't4', category: 'tawagines', categoryName: 'قسم الطواجن', name: 'طاجن بلطي', desc: 'قطع بلطي بالفرن مع الصلصة والفلفل.', price: 85, img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85' },
+{ id: 't5', category: 'tawagines', categoryName: 'قسم الطواجن', name: 'طاجن فيليه', desc: 'فيليه مشوي بصلصة المأكولات البحرية.', price: 100, img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85' },
+
+{
+id: 'sh1', category: 'sharqawi', categoryName: 'قسم الشرقاوي', name: 'كبدة شرقاوي', desc: 'كبدة بلدي بالبهارات الشرقاوية الفاخرة.',
+options: [{label: 'كيلو كامل (1 كجم)', price: 320}, {label: 'نصف كيلو (1/2 كجم)', price: 160}, {label: 'ربع كيلو (1/4 كجم)', price: 90}, {label: 'ثمن كيلو (1/8 كجم)', price: 50}],
+img: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=85'
+},
+{
+id: 'sh2', category: 'sharqawi', categoryName: 'قسم الشرقاوي', name: 'جمبري وسط', desc: 'جمبري طازج حجم وسط بالوزن.',
+options: [{label: 'كيلو كامل (1 كجم)', price: 600}, {label: 'نصف كيلو (1/2 كجم)', price: 300}, {label: 'ربع كيلو (1/4 كجم)', price: 150}, {label: 'ثمن كيلو (1/8 كجم)', price: 75}],
+img: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=900&q=85'
+},
+{
+id: 'sh3', category: 'sharqawi', categoryName: 'قسم الشرقاوي', name: 'جمبري جامبو', desc: 'جمبري جامبو فاخر جامد بالوزن.',
+options: [{label: 'كيلو كامل (1 كجم)', price: 700}, {label: 'نصف كيلو (1/2 كجم)', price: 350}, {label: 'ربع كيلو (1/4 كجم)', price: 175}, {label: 'ثمن كيلو (1/8 كجم)', price: 90}],
+img: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=900&q=85'
+},
+{
+id: 'sh4', category: 'sharqawi', categoryName: 'قسم الشرقاوي', name: 'فيليه شرقاوي', desc: 'قطع فيليه طازجة بالوزن.',
+options: [{label: 'كيلو كامل (1 كجم)', price: 380}, {label: 'نصف كيلو (1/2 كجم)', price: 190}, {label: 'ربع كيلو (1/4 كجم)', price: 95}, {label: 'ثمن كيلو (1/8 كجم)', price: 50}],
+img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85'
+},
+{
+id: 'sh5', category: 'sharqawi', categoryName: 'قسم الشرقاوي', name: 'سبيط شرقاوي', desc: 'قطع سبيط طازجة بالوزن.',
+options: [{label: 'كيلو كامل (1 كجم)', price: 600}, {label: 'نصف كيلو (1/2 كجم)', price: 300}, {label: 'ربع كيلو (1/4 كجم)', price: 150}, {label: 'ثمن كيلو (1/8 كجم)', price: 75}],
+img: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=900&q=85'
+},
+{
+id: 'sh6', category: 'sharqawi', categoryName: 'قسم الشرقاوي', name: 'مخ شرقاوي', desc: 'مخ بانيه ممتازة بالوزن.',
+options: [{label: 'كيلو كامل (1 كجم)', price: 880}, {label: 'نصف كيلو (1/2 كجم)', price: 450}, {label: 'ربع كيلو (1/4 كجم)', price: 230}, {label: 'ثمن كيلو (1/8 كجم)', price: 90}],
+img: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=85'
+},
+{
+id: 'sh7', category: 'sharqawi', categoryName: 'قسم الشرقاوي', name: 'مشكل شرقاوي', desc: 'تشكيلة مأكولات بحرية مشكلة فاخرة بالوزن.',
+options: [{label: 'كيلو كامل (1 كجم)', price: 650}, {label: 'نصف كيلو (1/2 كجم)', price: 350}, {label: 'ربع كيلو (1/4 كجم)', price: 170}],
+img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=900&q=85'
+},
+
+{
+id: 'e1', category: 'extras', categoryName: 'قسم الإضافات', name: 'شوربة سي فود', desc: 'شوربة سي فود كريمة أو بيضاء غنية بالجمبري والسبيط.',
+options: [{label: 'جامبو / كبير', price: 120}, {label: 'عادي / وسط', price: 100}],
+img: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=900&q=85'
+},
+{ id: 'e2', category: 'extras', categoryName: 'قسم الإضافات', name: 'أرز صيادية', desc: 'طبق أرز صيادية، اختار الحجم المناسب.', options: [{label: 'كبير', price: 30}, {label: 'وسط', price: 20}, {label: 'صغير', price: 15}], img: 'https://images.unsplash.com/photo-1516684732162-798a0062be99?auto=format&fit=crop&w=900&q=85' },
+{ id: 'e5', category: 'extras', categoryName: 'قسم الإضافات', name: 'خيار مخلل', desc: 'طبق خيار مخلل طازج ومقرمش.', price: 10, img: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=900&q=85' },
+{ id: 'e6', category: 'extras', categoryName: 'قسم الإضافات', name: 'بتنجان مخلل', desc: 'باذنجان مخلل بالدقة والثوم والخل.', price: 10, img: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=900&q=85' },
+{ id: 'e7', category: 'extras', categoryName: 'قسم الإضافات', name: 'كاتشب / صوص إضافي', desc: 'عبوة صوص أو كاتشب.', price: 15, img: 'https://images.unsplash.com/photo-1472476443507-c7a5948772fc?auto=format&fit=crop&w=900&q=85' },
+{ id: 'e8', category: 'extras', categoryName: 'قسم الإضافات', name: 'مياه معدنية', desc: 'اختار حجم زجاجة المياه المناسب.', options: [{label: 'كبيرة', price: 10}, {label: 'صغيرة', price: 5}], img: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=900&q=85' }
+];
+
+let cart = [];
+let selectedProductForModal = null;
+let deliveryFee = 20;
+
+function renderMenu(items) {
+const grid = document.getElementById('menuGrid');
+grid.innerHTML = '';
+items.forEach(item => {
+const card = document.createElement('div');
+card.onclick = () => openItemModal(item.id);
+card.className = 'glass-panel p-3 rounded-2xl cursor-pointer hover:border-yellow-500/60 transition duration-300 flex items-center gap-3 shadow-lg group';
+let priceTag = '';
+if (item.isWeight) {
+priceTag = `<span class="text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full whitespace-nowrap">حسب الوزن</span>`;
+} else if (item.options) {
+const minPrice = Math.min(...item.options.map(o => o.price));
+priceTag = `<div class="text-left"><span class="text-[10px] text-gray-400 block">يبدأ من</span><span class="text-base font-black text-yellow-400">${minPrice} ج.م</span></div>`;
+} else {
+priceTag = `<span class="text-base font-black text-yellow-400 whitespace-nowrap">${item.price} ج.م</span>`;
+}
+card.innerHTML = `
+<img src="${item.img}" alt="${item.name}" loading="lazy"
+onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85';"
+class="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-cover shrink-0 border border-yellow-500/20">
+<div class="min-w-0 flex-1 space-y-2">
+<div class="flex items-center gap-2">
+<i class="fa-solid fa-circle-dot text-[10px] text-yellow-500 group-hover:scale-125 transition"></i>
+<h3 class="font-bold text-sm sm:text-base text-white group-hover:text-yellow-400 transition">${item.name}</h3>
+</div>
+<p class="text-xs text-gray-400 line-clamp-2">${item.desc}</p>
+<div class="flex items-center justify-between gap-2">
+${priceTag}
+<span class="text-[10px] text-yellow-400/80">اضغط للتفاصيل</span>
+</div>
+</div>
+`;
+grid.appendChild(card);
+});
+}
+
+function filterCategory(cat) {
+document.querySelectorAll('.cat-btn').forEach(btn => {
+btn.classList.remove('bg-yellow-500', 'text-black');
+btn.classList.add('bg-brand-card', 'text-gray-300');
+});
+event.target.classList.remove('bg-brand-card', 'text-gray-300');
+event.target.classList.add('bg-yellow-500', 'text-black');
+if (cat === 'all') {
+renderMenu(menuData);
+} else {
+renderMenu(menuData.filter(i => i.category === cat));
+}
+}
+
+function openItemModal(id) {
+selectedProductForModal = menuData.find(i => i.id === id);
+document.getElementById('modalImg').src = selectedProductForModal.img;
+document.getElementById('modalImg').onerror = function () {
+this.onerror = null;
+this.src = 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=85';
+};
+document.getElementById('modalTitle').innerText = selectedProductForModal.name;
+document.getElementById('modalCategory').innerText = selectedProductForModal.categoryName;
+document.getElementById('modalDesc').innerText = selectedProductForModal.desc;
+const container = document.getElementById('modalOptionsContainer');
+const addBtn = document.getElementById('modalAddBtn');
+container.innerHTML = '';
+
+if (selectedProductForModal.isWeight) {
+container.innerHTML = `
+<div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl text-center">
+<span class="text-sm font-bold text-amber-400 block mb-1">الأسماك تُباع حسب الوزن والطريقة</span>
+<p class="text-xs text-gray-300">يتم تواصل الكابتن معك لتحديد الوزن والتسوية (سنجاري / مشوي / مقلي / زيت وليمون).</p>
+</div>
+`;
+addBtn.innerHTML = `<i class="fa-brands fa-whatsapp text-lg text-green-400"></i> اطلب وتحديد الوزن عبر الواتساب`;
+addBtn.onclick = () => {
+window.open(`https://wa.me/201128021899?text=${encodeURIComponent('السلام عليكم، حابب استفسر واطلب سمك: ' + selectedProductForModal.name)}`, '_blank');
+};
+} else if (selectedProductForModal.options) {
+selectedProductForModal.options.forEach((opt, idx) => {
+const label = document.createElement('label');
+label.className = 'flex items-center justify-between p-3 rounded-xl border border-gray-800 bg-slate-900 cursor-pointer hover:border-yellow-500/50 transition';
+label.innerHTML = `
+<div class="flex items-center gap-3">
+<input type="radio" name="modalOpt" value="${idx}" ${idx === 0 ? 'checked' : ''} class="accent-yellow-500 w-4 h-4">
+<span class="text-sm font-bold text-white">${opt.label}</span>
+</div>
+<span class="text-sm font-black text-yellow-400">${opt.price} ج.م</span>
+`;
+container.appendChild(label);
+});
+addBtn.innerHTML = `<i class="fa-solid fa-cart-plus"></i> إضافة للسلة بالخيار المحدد`;
+addBtn.onclick = addModalItemToCart;
+} else {
+container.innerHTML = `
+<div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-gray-800">
+<span class="text-sm font-bold text-gray-300">السعر الثابت:</span>
+<span class="text-lg font-black text-yellow-400">${selectedProductForModal.price} ج.م</span>
+</div>
+`;
+addBtn.innerHTML = `<i class="fa-solid fa-cart-plus"></i> إضافة للسلة`;
+addBtn.onclick = addModalItemToCart;
+}
+document.getElementById('itemModal').classList.remove('hidden');
+}
+
+function closeItemModal() {
+document.getElementById('itemModal').classList.add('hidden');
+selectedProductForModal = null;
+}
+
+function addModalItemToCart() {
+if (!selectedProductForModal) return;
+if (selectedProductForModal.options) {
+const selectedIdx = document.querySelector('input[name="modalOpt"]:checked').value;
+const selectedOpt = selectedProductForModal.options[selectedIdx];
+const cartKey = `${selectedProductForModal.id}_${selectedOpt.label}`;
+const existing = cart.find(i => i.key === cartKey);
+if (existing) {
+existing.qty++;
+} else {
+cart.push({
+key: cartKey,
+id: selectedProductForModal.id,
+name: `${selectedProductForModal.name} (${selectedOpt.label})`,
+price: selectedOpt.price,
+qty: 1
+});
+}
+} else {
+const existing = cart.find(i => i.key === selectedProductForModal.id);
+if (existing) {
+existing.qty++;
+} else {
+cart.push({
+key: selectedProductForModal.id,
+id: selectedProductForModal.id,
+name: selectedProductForModal.name,
+price: selectedProductForModal.price,
+qty: 1
+});
+}
+}
+closeItemModal();
+updateCartUI();
+openCartDrawer();
+}
+
+function toggleCart() {
+document.getElementById('cartDrawer').classList.toggle('-translate-x-full');
+}
+
+function openCartDrawer() {
+document.getElementById('cartDrawer').classList.remove('-translate-x-full');
+}
+
+function updateCartQty(key, delta) {
+const item = cart.find(i => i.key === key);
+if (!item) return;
+item.qty += delta;
+if (item.qty <= 0) {
+cart = cart.filter(i => i.key !== key);
+}
+updateCartUI();
+}
+
+function handleOrderTypeChange() {
+const orderType = document.getElementById('orderType').value;
+const addressGroup = document.getElementById('addressGroup');
+const custAddressInput = document.getElementById('custAddress');
+const deliveryFeeRow = document.getElementById('deliveryFeeRow');
+if (orderType === 'pickup') {
+addressGroup.classList.add('hidden');
+custAddressInput.removeAttribute('required');
+deliveryFee = 0;
+deliveryFeeRow.classList.add('hidden');
+} else {
+addressGroup.classList.remove('hidden');
+custAddressInput.setAttribute('required', 'true');
+deliveryFee = 20;
+deliveryFeeRow.classList.remove('hidden');
+}
+updateCartUI();
+}
+
+function updateCartUI() {
+const list = document.getElementById('cartItemsList');
+const badge = document.getElementById('cartCountBadge');
+list.innerHTML = '';
+let subtotal = 0;
+let totalItemsCount = 0;
+cart.forEach(item => {
+subtotal += item.price * item.qty;
+totalItemsCount += item.qty;
+const row = document.createElement('div');
+row.className = 'flex items-center justify-between p-3 rounded-xl bg-slate-900 border border-gray-800';
+row.innerHTML = `
+<div>
+<h4 class="text-xs font-bold text-white">${item.name}</h4>
+<span class="text-xs text-yellow-400 font-extrabold">${item.price * item.qty} ج.م</span>
+</div>
+<div class="flex items-center gap-2 bg-brand-dark px-2 py-1 rounded-lg border border-gray-800">
+<button onclick="updateCartQty('${item.key}', -1)" class="text-gray-400 hover:text-white text-xs font-bold w-5 h-5 flex items-center justify-center">-</button>
+<span class="text-xs font-bold text-white">${item.qty}</span>
+<button onclick="updateCartQty('${item.key}', 1)" class="text-gray-400 hover:text-white text-xs font-bold w-5 h-5 flex items-center justify-center">+</button>
+</div>
+`;
+list.appendChild(row);
+});
+if (cart.length === 0) {
+list.innerHTML = `<div class="text-center text-gray-500 text-xs py-10">السلة فارغة حالياً.. أضف بعض الأكلات الشهية! 🐟</div>`;
+}
+badge.innerText = totalItemsCount;
+document.getElementById('cartSubtotal').innerText = `${subtotal} ج.م`;
+document.getElementById('cartGrandTotal').innerText = `${subtotal > 0 ? subtotal + deliveryFee : 0} ج.م`;
+}
+
+function sendWhatsAppOrder(e) {
+e.preventDefault();
+if (cart.length === 0) {
+alert('سلة الطلبات فارغة! يرجى إضافة أكلات أولاً.');
+return;
+}
+const name = document.getElementById('custName').value;
+const phone = document.getElementById('custPhone').value;
+const orderType = document.getElementById('orderType').value;
+const address = document.getElementById('custAddress').value;
+const notes = document.getElementById('orderNotes').value;
+let subtotal = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
+let grandTotal = subtotal + (orderType === 'delivery' ? deliveryFee : 0);
+let msg = `*طلب جديد - قصر ابن حميدو للمأكولات البحرية* 🐟\n`;
+msg += `-----------------------------------\n`;
+msg += `👤 *الاسم:* ${name}\n`;
+msg += `📞 *الهاتف:* ${phone}\n`;
+msg += `🛵 *نوع الطلب:* ${orderType === 'delivery' ? 'توصيل دليفري' : 'استلام من المحل'}\n`;
+if (orderType === 'delivery') {
+msg += `📍 *العنوان:* ${address}\n`;
+}
+if (notes) {
+msg += `📝 *ملاحظات:* ${notes}\n`;
+}
+msg += `-----------------------------------\n`;
+msg += `🛒 *تفاصيل الطلب:*\n`;
+cart.forEach((i, idx) => {
+msg += `${idx + 1}. ${i.name} × ${i.qty} = ${i.price * i.qty} ج.م\n`;
+});
+msg += `-----------------------------------\n`;
+msg += `💵 *إجمالي المنتجات:* ${subtotal} ج.م\n`;
+if (orderType === 'delivery') {
+msg += `🚚 *رسوم التوصيل:* ${deliveryFee} ج.م\n`;
+}
+msg += `💰 *الإجمالي النهائي:* ${grandTotal} ج.م\n`;
+msg += `-----------------------------------\n`;
+msg += `شكراً لاختياركم قصر ابن حميدو! ❤️`;
+const restaurantWhatsApp = "201128021899";
+const whatsappUrl = `https://wa.me/${restaurantWhatsApp}?text=${encodeURIComponent(msg)}`;
+window.open(whatsappUrl, '_blank');
+}
+
+renderMenu(menuData);
+</script>
+</body>
+</html>
